@@ -1,0 +1,2 @@
+#!/bin/bash
+JWT=true MARIADB_NAME=boongoose node .
