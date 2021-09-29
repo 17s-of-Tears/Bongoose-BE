@@ -1,0 +1,4 @@
+echo '{"email": "temp", "password": "passw0rd"}' | \
+URI=http://192.168.0.63:3000/api/v1/sign/up \
+node ./Create
+
