@@ -2,3 +2,6 @@ echo '{"email": "temp", "password": "passw0rd"}' | \
 URI=http://192.168.0.63:3000/api/v1/sign/up \
 node ./Create
 
+ACCESS_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNjMyOTk2OTcwLjY5NiwiZXhwIjoxNjMzMDA0MTcwLjY5NiwiaXNzIjoiamVib25nIn0.bZY7vlRBWFrQVp0qM8t_8S04J-Uspn0YosfSvl8RyRk \
+URI=http://txshi.iptime.org:50080/api/v1/user/me \
+./Read
