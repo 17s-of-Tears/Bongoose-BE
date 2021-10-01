@@ -5,3 +5,9 @@ node ./Create
 ACCESS_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNjMyOTk2OTcwLjY5NiwiZXhwIjoxNjMzMDA0MTcwLjY5NiwiaXNzIjoiamVib25nIn0.bZY7vlRBWFrQVp0qM8t_8S04J-Uspn0YosfSvl8RyRk \
 URI=http://txshi.iptime.org:50080/api/v1/user/me \
 ./Read
+
+echo '{"content": "우리집 개냥이들 넘 귀여어어어~~", "addHashtags": ["개냥이"], "deleteHashtags": ["강아지"]}' | \
+ACCESS_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNjMzMDUxNjQ4LjY2MSwiZXhwIjoxNjMzMDU4ODQ4LjY2MSwiaXNzIjoiamVib25nIn0.NXEQh1gOTLSepRIQIvO9ARP-QOXCVLF70j_3YoiEHoM \
+URI=http://192.168.0.63:3000/api/v1/board/2 \
+node ./Update
+

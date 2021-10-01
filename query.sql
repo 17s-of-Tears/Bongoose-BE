@@ -27,8 +27,10 @@ create table if not exists boardHashtag(
 
 create table if not exists boardLike(
   boardId int unsigned not null,
+  userId int unsigned not null,
   likeOrDislike tinyint unsigned not null default 1,
-  foreign key (boardId) references board(id) on delete cascade on update cascade
+  foreign key (boardId) references board(id) on delete cascade on update cascade,
+  foreign key (userId) references user(id) on delete cascade on update cascade
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table if not exists boardImage(
@@ -41,6 +43,17 @@ create table if not exists boardImage(
 create table if not exists boardReply(
   id int unsigned not null AUTO_INCREMENT,
   boardId int unsigned not null,
+  userId int unsigned not null,
   content text not null default '',
-  foreign key (boardId) references board(id) on delete cascade on update cascade
-) ENGINE=InnoDB DEFAULT AUTO_INCREMENT=1 CHARSET=utf8mb4;
+  foreign key (boardId) references board(id) on delete cascade on update cascade,
+  foreign key (userId) references user(id) on delete cascade on update cascade,
+  primary key (id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+create table if not exists friend(
+  userId int unsigned not null,
+  friendUserId int unsigned not null,
+  foreign key (userId) references user(id) on delete cascade on update cascade,
+  foreign key (friendUserId) references user(id) on delete cascade on update cascade,
+  primary key (userId, friendUserId)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

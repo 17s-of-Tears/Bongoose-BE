@@ -13,8 +13,21 @@ module.exports = {
         throw new Error('???');
       }
       const user = result.rows[0];
-      res.json(user);
+      return {
+        user
+      };
+    })('select boardImage.imageUrl, board.id from board left join boardImage on board.id=boardImage.boardId where board.userId=? and boardImage.boardId is not null order by board.createdAt desc limit 8', [
+      id
+    ])((result, storage) => {
+      res.json({
+        ...storage.user,
+        images: result.rows
+      });
     })().catch(err => next(err));
+    /*
 
+    */
+    // 사용자의 최근 업로드 사진 8개
+    // 사용자의 최근 업로드 글
   }
 };
