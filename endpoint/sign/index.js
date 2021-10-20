@@ -8,5 +8,9 @@ module.exports = {
   Read(req, res, next) {
     const dao = new SignModel(req);
     dao.read(res).catch(err => next(err));
+  },
+  Update(req, res, next) {
+    const dao = new SignModel(req);
+    dao.update(res).catch(err => next(err));
   }
 };

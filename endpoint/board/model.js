@@ -13,10 +13,9 @@ class BoardModel extends Model {
   }
 
   async create(res) {
-    this.isAuthorized();
-
     this.checkParameters(this.content);
     await this.dao.serialize(async db => {
+      await this.checkAuthorized(db);
       const result = await db.run('insert into board(userId, content) values (?, ?)', [
         this.requestUserID, this.content
       ]);

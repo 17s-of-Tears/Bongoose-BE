@@ -33,3 +33,16 @@
   "images": []
 }
 ```
+
+- PUT /api/v1/user/me
+
+|parameter|type|description|optional|
+|---|---|---|:-:|
+|body.nickname|String|변경할 닉네임|✓|
+|body.image|null|프로필 사진 삭제|✓|
+|multipart.nickname|String|변경할 닉네임|✓|
+|multipart.image|File|변경할 프로필 사진|✓|
+
+```json
+{"complete": true}
+```

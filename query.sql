@@ -10,6 +10,14 @@ create table if not exists user (
   primary key (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
+create table if not exists userState (
+  id int unsigned not null,
+  fresh char(36) not null,
+  createdAt timestamp not null default current_timestamp on update current_timestamp,
+  UNIQUE (fresh),
+  foreign key (id) references user(id) on delete cascade on update cascade
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
 create table if not exists board (
   id int unsigned not null AUTO_INCREMENT,
   userId int unsigned not null,

@@ -1,6 +1,7 @@
 const SignModel = require('../model');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const uuidv4 = require('uuid').v4;
 function createDefaultName() {
   const defaultHash = crypto.randomBytes(3).toString('hex');
   return `봉구${defaultHash}`;
@@ -23,8 +24,11 @@ class SignUpModel extends SignModel {
       }
       const passwordHash = await bcrypt.hash(this.password, 10);
 
-      await db.run('insert into user(name, email, password) values (?, ?, ?)', [
+      const result = await db.run('insert into user(name, email, password) values (?, ?, ?)', [
         this.nickname, this.email, passwordHash
+      ]);
+      await db.run('insert into userState(id, fresh) values (?, ?)', [
+        result.lastID, uuidv4()
       ]);
 
       res.status(201);
@@ -32,23 +36,6 @@ class SignUpModel extends SignModel {
         complete: true
       });
     });
-
-    /*
-    return this.query('select user.name from user where user.email=?', [
-      email
-    ])(async result => {
-      if(result.rows.length) {
-
-      }
-      return {
-        passwordHash:
-      };
-    })('insert into user(name, email, password) values (?, ?, ?)', storage => ([
-      rage.passwordHash
-    ]))(() => {
-
-    })();
-    */
   }
 }
 module.exports = SignUpModel;
