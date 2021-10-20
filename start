@@ -1,2 +1,2 @@
 #!/bin/bash
-JWT=true MARIADB_NAME=boongoose JEKO_HOME=$HOME'/jeko' node .
+JWT=true PROXY=true MARIADB_NAME=boongoose JEKO_HOME=$HOME'/jeko' node .
