@@ -6,6 +6,7 @@ create table if not exists user (
   createdAt timestamp not null default current_timestamp,
   modifiedAt timestamp not null default current_timestamp on update current_timestamp,
   imageUrl varchar(2083) null,
+  description varchar(20) not null default '',
   UNIQUE (email),
   primary key (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
@@ -42,10 +43,11 @@ create table if not exists boardLike(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table if not exists boardImage(
-  imageId int unsigned not null AUTO_INCREMENT,
+  id int unsigned not null AUTO_INCREMENT,
   boardId int unsigned not null,
   imageUrl varchar(2083) null,
-  foreign key (boardId) references board(id) on delete cascade on update cascade
+  foreign key (boardId) references board(id) on delete cascade on update cascade,
+  primary key (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 create table if not exists boardReply(

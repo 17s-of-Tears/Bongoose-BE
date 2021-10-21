@@ -1,5 +1,4 @@
 const BoardDetailModel = require('./model');
-
 module.exports = {
   Delete(req, res, next) {
     const dao = new BoardDetailModel(req);

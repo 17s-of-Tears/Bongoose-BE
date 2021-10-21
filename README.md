@@ -26,16 +26,6 @@
     </th>
   </tr>
   <tr>
-    <th>8주차</th>
-    <td>자기소개 추가</td>
-    <td></td>
-    <td>
-      글 사진 CRUD(limit 4)
-    </td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
     <th>9주차</th>
     <td>다른 사용자 조회</td>
     <td></td>

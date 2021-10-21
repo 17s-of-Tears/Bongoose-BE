@@ -22,10 +22,16 @@
 
 - POST /api/v1/board
 
-|parameter|type|description|
-|---|---|---|
-|body.content|String|게시글 본문|
-|body.hashtags|Array<String>|해시태그 목록|
+<table>
+<tr><th>parameter</th><th>type</th><th>description</th><th>optional</th></tr>
+<tr><th colspan="4">application/json</th></tr>
+<tr><td>content</td><td>String</td><td>게시글 본문</td><td></td></tr>
+<tr><td>hashtags</td><td>Array&lt;String&gt;</td><td>해시태그 목록</td><td>✓</td></tr>
+<tr><th colspan="4">multipart/form-data</th></tr>
+<tr><td>content</td><td>String</td><td>게시글 본문</td><td></td></tr>
+<tr><td>hashtags</td><td>Array&lt;String&gt;</td><td>해시태그 목록</td><td>✓</td></tr>
+<tr><td>images</td><td>Array&lt;File&gt;</td><td>게시글 사진(최대 4개)</td><td>✓</td></tr>
+</table>
 
 ```json
 {"boardId": 2}
@@ -43,7 +49,13 @@
   },{
     "hashtag": "개냥이"
   }],
-  "images": [],
+  "images": [{
+      "id": 9,
+      "imageUrl": "img/board/6e08fbaf13f3444ebef95b22a3036d9c.png"
+  },{
+      "id": 13,
+      "imageUrl": "img/board/d7633e39ce8047af8e95f7a754f82811.png"
+  }],
   "likes": 0,
   "dislikes": 0,
   "comments": 0
@@ -59,11 +71,25 @@
 |body.deleteHashtags|Array<String>|삭제할 해시태그 목록|
 
 ```json
-{"boardId": 2, "complete": true}
+{"complete": true}
 ```
 
 - DELETE /api/v1/board/:boardId
 
 ```json
-{"boardId": 2, "complete": true}
+{"complete": true}
+```
+
+- PUT /api/v1/board/:boardId/image
+
+<table>
+<tr><th>parameter</th><th>type</th><th>description</th></tr>
+<tr><th colspan="3">multipart/form-data</th></tr>
+<tr><td>images</td><td>Array&lt;File&gt;</td><td>게시글 사진(최대 4개)</td></tr>
+</table>
+
+- DELETE /api/v1/board/:boardId/image/:imageId
+
+```json
+{"complete": true}
 ```

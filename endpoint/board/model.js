@@ -1,4 +1,5 @@
 const Model = require('../model');
+const FileSystem = require('./file').BoardFileSystem;
 class BoardModel extends Model {
   constructor(req) {
     super(req);
@@ -10,31 +11,45 @@ class BoardModel extends Model {
     this.content = req.body?.content;
     this.hashtags = req.body?.hashtags ?? [];
     this.images = req.body?.images ?? [];
+
+    if(req.files) {
+      this.file = new FileSystem(null, req.files);
+    } else if(req.method === 'DELETE') {
+      this.file = new FileSystem(null, null);
+    }
   }
 
   async create(res) {
-    this.checkParameters(this.content);
-    await this.dao.serialize(async db => {
-      await this.checkAuthorized(db);
-      const result = await db.run('insert into board(userId, content) values (?, ?)', [
-        this.requestUserID, this.content
-      ]);
-      const boardId = result.lastID;
-      if(!boardId) {
-        throw new Error('???');
-      }
-
-      for(const hashtag of this.hashtags) {
-        await db.run('insert into boardHashtag(boardId, hashtag) values (?, ?)', [
-          boardId, hashtag
+    try {
+      this.checkParameters(this.content);
+      await this.dao.serialize(async db => {
+        await this.checkAuthorized(db);
+        const result = await db.run('insert into board(userId, content) values (?, ?)', [
+          this.requestUserID, this.content
         ]);
-      }
+        const boardId = result.lastID;
+        if(!boardId) {
+          throw new Error('???');
+        }
 
-      res.status(201);
-      res.json({
-        boardId
+        for(const hashtag of this.hashtags) {
+          await db.run('insert into boardHashtag(boardId, hashtag) values (?, ?)', [
+            boardId, hashtag
+          ]);
+        }
+
+        this.file.id = boardId;
+        await this.file.createIntegrityAssurance(db);
+
+        res.status(201);
+        res.json({
+          boardId
+        });
       });
-    });
+    } catch(err) {
+      this.file && this.file.withdraw();
+      throw err;
+    }
   }
 
   async read(res) {

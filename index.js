@@ -10,6 +10,8 @@ sign('/up', require('./endpoint/sign/up'));
 const board = api('/board');
 board('/', require('./endpoint/board'));
 board('/:boardId', require('./endpoint/board/detail'));
+board('/:boardId/image', require('./endpoint/board/detail/image'));
+board('/:boardId/image/:imageId', require('./endpoint/board/detail/image/detail'));
 const friend = api('/friend');
 
 app.listen(48000);
