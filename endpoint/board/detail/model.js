@@ -35,7 +35,7 @@ class BoardDetailModel extends BoardModel {
         this.boardId, this.requestUserID
       ]);
       if(!result.affectedRows) {
-        throw new Error('403 권한 없음 예정');
+        throw new Error('403 권한 없음');
       }
       res.json({
         complete: true
@@ -50,7 +50,7 @@ class BoardDetailModel extends BoardModel {
       ]);
       const board = boards[0];
       if(!board) {
-        throw new Error('404 내용 없음 예정');
+        throw new Error('404 내용 없음');
       }
 
       const hashtags = await db.get('select boardHashtag.hashtag from boardHashtag where boardHashtag.boardId=?', [
@@ -59,11 +59,11 @@ class BoardDetailModel extends BoardModel {
       const images = await db.get('select boardImage.id, boardImage.imageUrl from boardImage where boardImage.boardId=?', [
         this.boardId
       ]);
-      const lod = await db.get('select count(boardLike.likeOrDislike=1) as likes, count(boardLike.likeOrDislike=0) as dislikes from boardLike where boardLike.boardId=?', [
+      const lod = await db.get('select sum(boardLike.likeOrDislike=1) as likes, sum(boardLike.likeOrDislike=0) as dislikes from boardLike where boardLike.boardId=?', [
         this.boardId
       ]);
-      const likes = lod[0].likse;
-      const dislikes = lod[0].dislikes;
+      const likes = (lod[0].likes===null ? 0 : lod[0].likes);
+      const dislikes = (lod[0].dislikes===null ? 0 : lod[0].dislikes);
       const comments = (await db.get('select count(*) as comments from boardReply where boardReply.boardId=?', [
         this.boardId
       ]))[0].comments;
@@ -88,7 +88,7 @@ class BoardDetailModel extends BoardModel {
         this.content, this.boardId, this.requestUserID
       ]);
       if(!result.affectedRows) {
-        throw new Error('403 권한 없음 예정');
+        throw new Error('403 권한 없음');
       }
 
       const tags = (await db.get('select boardHashtag.hashtag from boardHashtag where boardHashtag.boardId=?', [

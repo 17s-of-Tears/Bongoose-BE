@@ -2,35 +2,58 @@
 
 - GET /api/v1/board
 
-|parameter|type|description|
-|---|---|---|
-|query.start|Number|검색 시작점|
-|query.end|Number|검색 종료점|
-|query.keyword|String|사용자 닉네임 또는 해시태그|
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>start</td><td>Number</td><td>검색 시작점</td><td>0</td><td>✓</td></tr>
+<tr><td>end</td><td>Number</td><td>검색 종료점</td><td>15</td><td>✓</td></tr>
+<tr><td>keyword</td><td>Number</td><td>사용자 닉네임 또는 해시태그</td><td></td><td>✓</td></tr>
+<tr><td>userId</td><td>Number</td><td>사용자 ID</td><td></td><td>✓</td></tr>
+</table>
 
 ```json
+//request
+{ "start": 2, "end": 3 }
+
+//response
 {
-  "boards": [{
-    "id": 2,
-    "userName": "봉구3499e3",
-    "content": "우리집 개냥이들 넘 귀여어어어~~"
-  }],
-  "requestEnd": 15,
-  "lastEnd": 1
+   "boards": [
+      {
+         "id": 33,
+         "userName": "코스삭제",
+         "userEmail": "b@b.com",
+         "content": "네트워크",
+         "createdAt": "2021-11-07T15:07:48.000Z"
+      },
+      {
+         "id": 32,
+         "userName": "코스삭제",
+         "userEmail": "b@b.com",
+         "content": "봉구스는 위대",
+         "createdAt": "2021-11-07T15:07:29.000Z"
+      },
+      {
+         "id": 31,
+         "userName": "찬규",
+         "userEmail": "a@a",
+         "content": "333333333333333333333",
+         "createdAt": "2021-11-07T14:54:36.000Z"
+      }
+   ],
+   "requestEnd": "3",
+   "lastEnd": 29
 }
 ```
 
 - POST /api/v1/board
 
 <table>
-<tr><th>parameter</th><th>type</th><th>description</th><th>optional</th></tr>
-<tr><th colspan="4">application/json</th></tr>
-<tr><td>content</td><td>String</td><td>게시글 본문</td><td></td></tr>
-<tr><td>hashtags</td><td>Array&lt;String&gt;</td><td>해시태그 목록</td><td>✓</td></tr>
-<tr><th colspan="4">multipart/form-data</th></tr>
-<tr><td>content</td><td>String</td><td>게시글 본문</td><td></td></tr>
-<tr><td>hashtags</td><td>Array&lt;String&gt;</td><td>해시태그 목록</td><td>✓</td></tr>
-<tr><td>images</td><td>Array&lt;File&gt;</td><td>게시글 사진(최대 4개)</td><td>✓</td></tr>
+<tr><th colspan="2" rowspan="2">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><td colspan="3">multipart/form-data</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>content</td><td>String</td><td>게시글 본문</td><td></td><td></td></tr>
+<tr><td>content</td><td>Array&lt;String&gt;</td><td>해시태그 목록</td><td>[]</td><td>✓</td></tr>
+<tr><td>content</td><td>Array&lt;File&gt;</td><td>게시글 사진(최대 4개)</td><td>[]</td><td>✓</td></tr>
 </table>
 
 ```json
@@ -39,26 +62,26 @@
 
 - GET /api/v1/board/:boardId
 
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>:boardId</td><td>Number</td><td>게시글 번호</td><td></td><td></td></tr>
+</table>
+
 ```json
+//request
+{}
+
+//response
 {
-  "name": "봉구3499e3",
-  "createdAt": "2021-10-01T01:32:36.000Z",
-  "content": "우리집 개냥이들 넘 귀여어어어~~",
-  "hashtags": [{
-    "hashtag": "고양이"
-  },{
-    "hashtag": "개냥이"
-  }],
-  "images": [{
-      "id": 9,
-      "imageUrl": "img/board/6e08fbaf13f3444ebef95b22a3036d9c.png"
-  },{
-      "id": 13,
-      "imageUrl": "img/board/d7633e39ce8047af8e95f7a754f82811.png"
-  }],
-  "likes": 0,
-  "dislikes": 0,
-  "comments": 0
+   "name": "찬규",
+   "createdAt": "2021-11-07T14:38:22.000Z",
+   "content": "test",
+   "hashtags": [],
+   "images": [],
+   "likes": 0,
+   "dislikes": 0,
+   "comments": 0
 }
 ```
 
@@ -92,4 +115,53 @@
 
 ```json
 {"complete": true}
+```
+
+- GET /api/v1/board/:boardId/like
+
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>:boardId</td><td>Number</td><td>게시글 번호</td><td></td><td></td></tr>
+</table>
+
+```json
+//request
+{}
+
+//response
+{ "like": true }
+```
+
+- PUT /api/v1/board/:boardId/like
+
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>:boardId</td><td>Number</td><td>게시글 번호</td><td></td><td></td></tr>
+<tr><td>like</td><td>Boolean</td><td>true: like, false: dislike</td><td></td><td></td></tr>
+</table>
+
+```json
+//request
+{ "like": true }
+
+//response
+{ "complete": true }
+```
+
+- DELETE /api/v1/board/:boardId/like
+
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>:boardId</td><td>Number</td><td>게시글 번호</td><td></td><td></td></tr>
+</table>
+
+```json
+//request
+{}
+
+//response
+{ "complete": true }
 ```

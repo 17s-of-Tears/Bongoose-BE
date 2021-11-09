@@ -1,2 +1,2 @@
 #!/bin/bash
-JWT=true PROXY=true MARIADB_NAME=boongoose JEKO_HOME=$HOME'/jeko' node .
+JWT=true PROXY=true MARIADB_NAME=boongoose CORS_WHITELIST='.corsWhitelist' JEKO_HOME=$HOME'/jeko' node .

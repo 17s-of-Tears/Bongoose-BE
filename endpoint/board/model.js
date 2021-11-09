@@ -7,6 +7,7 @@ class BoardModel extends Model {
     this.start = req.query?.start ?? 0;
     this.end = req.query?.end ?? 15;
     this.keyword = req.query?.keyword ?? '';
+    this.userId = req.query?.userId;
 
     this.content = req.body?.content;
     this.hashtags = req.body?.hashtags ?? [];
@@ -38,8 +39,10 @@ class BoardModel extends Model {
           ]);
         }
 
-        this.file.id = boardId;
-        await this.file.createIntegrityAssurance(db);
+        if(this.file) {
+          this.file.id = boardId;
+          await this.file.createIntegrityAssurance(db);
+        }
 
         res.status(201);
         res.json({
@@ -50,24 +53,65 @@ class BoardModel extends Model {
       this.file && this.file.withdraw();
       throw err;
     }
+
+    this.dao.serialize(async db => {
+      await db.run(
+`insert into notification(subscribeUserId, publishUserId, message, isAlert)
+select
+  userRelation.subscribeUserId,
+  userRelation.publishUserId,
+  ?,
+  1
+from
+  userRelation
+where
+  userRelation.publishUserId=?`, [ this.content, this.requestUserID ]);
+    }).catch(console.error);
+  }
+
+  async getBoardOfUserId(db) {
+    this.checkParameters(this.userId);
+    const metadata = await db.get('select count(distinct board.id) as lastEnd from board left join boardHashtag on board.id=boardHashtag.boardId left join user on board.userId=user.id where user.id=?', [
+      this.userId
+    ]);
+    const lastEnd = metadata[0].lastEnd;
+    const boards = await db.get('select distinct board.id, user.name as userName, user.email as userEmail, board.content, board.createdAt from board left join boardHashtag on board.id=boardHashtag.boardId left join user on board.userId=user.id where user.id=? order by board.id desc limit ?,?', [
+      this.userId, this.start-0, this.end-0
+    ]);
+    return {boards, lastEnd};
+  }
+
+  async getBoardOfKeyword(db) {
+    const metadata = await db.get('select count(distinct board.id) as lastEnd from board left join boardHashtag on board.id=boardHashtag.boardId left join user on board.userId=user.id where user.name like ? or boardHashtag.hashtag like ?', [
+      `%${this.keyword}%`, `%${this.keyword}%`
+    ]);
+    const lastEnd = metadata[0].lastEnd;
+    const boards = await db.get('select distinct board.id, user.name as userName, user.email as userEmail, board.content, board.createdAt from board left join boardHashtag on board.id=boardHashtag.boardId left join user on board.userId=user.id where user.name like ? or boardHashtag.hashtag like ? order by board.id desc limit ?,?', [
+      `%${this.keyword}%`, `%${this.keyword}%`, this.start-0, this.end-0
+    ]);
+    return {boards, lastEnd};
   }
 
   async read(res) {
-    await this.dao.serialize(async db => {
-      const metadata = await db.get('select count(distinct board.id) as lastEnd from board left join boardHashtag on board.id=boardHashtag.boardId left join user on board.userId=user.id where user.name like ? or boardHashtag.hashtag like ?', [
-        `%${this.keyword}%`, `%${this.keyword}%`
-      ]);
-      const lastEnd = metadata[0].lastEnd;
-      const boards = await db.get('select distinct board.id, user.name as userName, board.content from board left join boardHashtag on board.id=boardHashtag.boardId left join user on board.userId=user.id where user.name like ? or boardHashtag.hashtag like ? limit ?,?', [
-        `%${this.keyword}%`, `%${this.keyword}%`, this.start, this.end
-      ]);
-
-      res.json({
-        boards,
-        requestEnd: this.end,
-        lastEnd
+    if(this.userId) {
+      await this.dao.serialize(async db => {
+        const {boards, lastEnd} = await this.getBoardOfUserId(db);
+        res.json({
+          boards,
+          requestEnd: this.end,
+          lastEnd
+        });
       });
-    });
+    } else {
+      await this.dao.serialize(async db => {
+        const {boards, lastEnd} = await this.getBoardOfKeyword(db);
+        res.json({
+          boards,
+          requestEnd: this.end,
+          lastEnd
+        });
+      });
+    }
   }
 }
 module.exports = BoardModel;
