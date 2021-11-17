@@ -15,7 +15,7 @@ class UserDetailModel extends UserModel {
   async read(res) {
     await this.dao.serialize(async db => {
       await this.checkAuthorized(db);
-      const users = await db.get('select user.name, user.email, user.createdAt, user.modifiedAt, user.imageUrl, user.description from user where user.id=?', [
+      const users = await db.get('select user.id, user.name, user.email, user.createdAt, user.modifiedAt, user.imageUrl, user.description from user where user.id=?', [
         this.requestUserID
       ]);
       if(!users.length) {

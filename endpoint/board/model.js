@@ -20,6 +20,10 @@ class BoardModel extends Model {
     }
   }
 
+  checkDuplicateHashtags(hashtags) {
+    return Array.from(new Set(hashtags));
+  }
+
   async create(res) {
     try {
       this.checkParameters(this.content);
@@ -33,7 +37,8 @@ class BoardModel extends Model {
           throw new Error('???');
         }
 
-        for(const hashtag of this.hashtags) {
+        const nonDuplicateHashtags = this.checkDuplicateHashtags(this.hashtags);
+        for(const hashtag of nonDuplicateHashtags) {
           await db.run('insert into boardHashtag(boardId, hashtag) values (?, ?)', [
             boardId, hashtag
           ]);
@@ -75,10 +80,29 @@ where
       this.userId
     ]);
     const lastEnd = metadata[0].lastEnd;
-    const boards = await db.get('select distinct board.id, user.name as userName, user.email as userEmail, board.content, board.createdAt from board left join boardHashtag on board.id=boardHashtag.boardId left join user on board.userId=user.id where user.id=? order by board.id desc limit ?,?', [
+    const boards = await db.get(
+      `select
+  distinct board.id,
+  user.name as userName,
+  user.email as userEmail,
+  concat('[', group_concat(distinct '{"', boardImage.id, '":"', boardImage.imageUrl, '"}'), ']') as images,
+  concat('[', group_concat(distinct '"', boardHashtag.hashtag, '"'), ']') as hashtags,
+  sum(case when boardLike.likeOrDislike=1 then 1 else 0 end) as likes,
+  sum(case when boardLike.likeOrDislike=0 then 1 else 0 end) as dislikes,
+  board.content,
+  board.createdAt
+from
+  board left join boardHashtag on board.id=boardHashtag.boardId left join
+  user on board.userId=user.id left join
+  boardImage on board.id=boardImage.boardId left join
+  boardLike on board.id=boardLike.boardId
+where user.id=? group by board.id order by board.id desc limit ?,?`, [
       this.userId, this.start-0, this.end-0
     ]);
-    return {boards, lastEnd};
+    return {
+      boards: boards && boards.map(row => ({ ...row, images: row.images===null ? null : JSON.parse(row.images), hashtags: row.hashtags===null ? null : JSON.parse(row.hashtags) })),
+      lastEnd,
+    };
   }
 
   async getBoardOfKeyword(db) {
@@ -86,10 +110,29 @@ where
       `%${this.keyword}%`, `%${this.keyword}%`
     ]);
     const lastEnd = metadata[0].lastEnd;
-    const boards = await db.get('select distinct board.id, user.name as userName, user.email as userEmail, board.content, board.createdAt from board left join boardHashtag on board.id=boardHashtag.boardId left join user on board.userId=user.id where user.name like ? or boardHashtag.hashtag like ? order by board.id desc limit ?,?', [
+    const boards = await db.get(
+      `select
+  distinct board.id,
+  user.name as userName,
+  user.email as userEmail,
+  concat('[', group_concat(distinct '{"', boardImage.id, '":"', boardImage.imageUrl, '"}'), ']') as images,
+  concat('[', group_concat(distinct '"', boardHashtag.hashtag, '"'), ']') as hashtags,
+  sum(case when boardLike.likeOrDislike=1 then 1 else 0 end) as likes,
+  sum(case when boardLike.likeOrDislike=0 then 1 else 0 end) as dislikes,
+  board.content,
+  board.createdAt
+from
+  board left join boardHashtag on board.id=boardHashtag.boardId left join
+  user on board.userId=user.id left join
+  boardImage on board.id=boardImage.boardId left join
+  boardLike on board.id=boardLike.boardId
+where user.name like ? or boardHashtag.hashtag like ? group by board.id order by board.id desc limit ?,?`, [
       `%${this.keyword}%`, `%${this.keyword}%`, this.start-0, this.end-0
     ]);
-    return {boards, lastEnd};
+    return {
+      boards: boards && boards.map(row => ({ ...row, images: row.images===null ? null : JSON.parse(row.images), hashtags: row.hashtags===null ? null : JSON.parse(row.hashtags) })),
+      lastEnd,
+    };
   }
 
   async read(res) {

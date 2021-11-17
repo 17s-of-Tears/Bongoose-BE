@@ -3,8 +3,8 @@ class UserModel extends Model {
   constructor(req) {
     super(req);
 
-    this.start = req.query?.start ?? 0;
-    this.end = req.query?.end ?? 15;
+    this.start = (req.query?.start ?? 0) - 0;
+    this.end = (req.query?.end ?? 15) - 0;
     this.keyword = req.query?.keyword ?? '';
     this.mysubscribe = req.query?.mysubscribe ?? false;
   }

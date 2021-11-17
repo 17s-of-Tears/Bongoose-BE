@@ -2,7 +2,8 @@ const UserDetailModel = require('../model');
 class UserRelationModel extends UserDetailModel {
   constructor(req) {
     super(req);
-    this.block = req.body?.block;
+    // 처음엔 차단 기능을 생각했습니다만 기획에도 없고 해서 일단 보류
+    //this.block = req.body?.block;
   }
 
   async checkAvailable(db) {
@@ -35,7 +36,8 @@ class UserRelationModel extends UserDetailModel {
   }
 
   async update(res) {
-    this.checkParameters(this.userId, this.block);
+    //this.checkParameters(this.userId, this.block);
+    this.checkParameters(this.userId);
     await this.dao.serialize(async db => {
       await this.checkAuthorized(db);
       await this.checkAvailable(db);
@@ -43,7 +45,8 @@ class UserRelationModel extends UserDetailModel {
         throw new Error('400 잘못된 사용자');
       }
       let result = {};
-      const block = (!!this.block) ? 1 : 0;
+      const block = 0;
+      //const block = (!!this.block) ? 1 : 0;
       if(await this.checkExists(db)) {
         result = await db.run('update userRelation set userRelation.isBlock=? where userRelation.subscribeUserId=? and userRelation.publishUserId=? limit 1', [
           block, this.requestUserID, this.userId

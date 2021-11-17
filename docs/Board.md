@@ -60,6 +60,25 @@
 {"boardId": 2}
 ```
 
+- GET /api/v1/board/rating
+
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+</table>
+
+```js
+//request
+{}
+
+//response
+[
+   { "hashtag": "1234", "total": 3 },
+   { "hashtag": "ㅎㅇ", "total": 2 },
+   { "hashtag": "123", "total": 1 }
+]
+```
+
 - GET /api/v1/board/:boardId
 
 <table>
@@ -90,8 +109,7 @@
 |parameter|type|description|
 |---|---|---|
 |body.content|String|게시글 본문|
-|body.addHashtags|Array<String>|추가할 해시태그 목록|
-|body.deleteHashtags|Array<String>|삭제할 해시태그 목록|
+|body.hashtags|Array<String>|해시태그 목록(덮어쓰기)|
 
 ```json
 {"complete": true}

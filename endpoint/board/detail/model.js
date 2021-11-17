@@ -4,8 +4,7 @@ class BoardDetailModel extends BoardModel {
     super(req);
 
     this.boardId = req.params?.boardId;
-    this.addHashtags = req.body?.addHashtags ?? [];
-    this.deleteHashtags = req.body?.deleteHashtags ?? [];
+
   }
 
   async checkBoardOwned(db) {
@@ -91,24 +90,15 @@ class BoardDetailModel extends BoardModel {
         throw new Error('403 권한 없음');
       }
 
-      const tags = (await db.get('select boardHashtag.hashtag from boardHashtag where boardHashtag.boardId=?', [
+      // hashtag 덮어쓰기
+      await db.run('delete from boardHashtag where boardHashtag.boardId=?', [
         this.boardId
-      ])).map(row => row.hashtag);
+      ]);
 
-      for(const hashtag of this.addHashtags) {
-        console.log(hashtag, tags, tags.includes(hashtag));
-        if(tags.includes(hashtag)) {
-          continue;
-        }
+      // 프론트엔드 요청사항에 의해 덮어쓰기로 변경
+      const nonDuplicateHashtags = this.checkDuplicateHashtags(this.hashtags);
+      for(const hashtag of nonDuplicateHashtags) {
         await db.run('insert into boardHashtag(boardId, hashtag) values (?, ?)', [
-          this.boardId, hashtag
-        ]);
-      }
-      for(const hashtag of this.deleteHashtags) {
-        if(!tags.includes(hashtag)) {
-          continue;
-        }
-        await db.run('delete from boardHashtag where boardHashtag.boardId=? and boardHashtag.hashtag=?', [
           this.boardId, hashtag
         ]);
       }

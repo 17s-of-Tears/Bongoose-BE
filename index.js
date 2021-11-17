@@ -11,6 +11,7 @@ sign('/', require('./endpoint/sign'));
 sign('/up', require('./endpoint/sign/up'));
 const board = api('/board');
 board('/', require('./endpoint/board'));
+board('/rating', require('./endpoint/board/rating'));
 board('/:boardId', require('./endpoint/board/detail'));
 board('/:boardId/comment', require('./endpoint/board/detail/comment'));
 board('/:boardId/comment/:commentId', require('./endpoint/board/detail/comment/detail'));
@@ -29,4 +30,4 @@ app.addErrorType(Error, {
     }
   }
 });
-app.listen(48000);
+app.listen(48100);

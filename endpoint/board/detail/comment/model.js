@@ -25,7 +25,7 @@ class BoardDetailReplyModel extends BoardDetailModel {
   async read(res) {
     this.checkParameters(this.boardId);
     await this.dao.serialize(async db => {
-      const comments = await db.get('select boardReply.id as commentID, user.name, boardReply.content from boardReply left join user on boardReply.userId=user.id where boardReply.boardId=?', [
+      const comments = await db.get('select boardReply.id as commentID, user.name, boardReply.content, boardReply.createdAt from boardReply left join user on boardReply.userId=user.id where boardReply.boardId=?', [
         this.boardId
       ]);
       res.json({
