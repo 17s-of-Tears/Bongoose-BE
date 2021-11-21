@@ -11,6 +11,9 @@ class BoardModel extends Model {
 
     this.content = req.body?.content;
     this.hashtags = req.body?.hashtags ?? [];
+    if(!this.hashtags instanceof Array) {
+      this.hashtags = [ this.hashtags ];
+    }
     this.images = req.body?.images ?? [];
 
     if(req.files) {

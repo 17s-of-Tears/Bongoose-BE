@@ -1,7 +1,7 @@
-const BoardDetailImageDetailModel = require('./model');
+const BoardDetailImageModel = require('./model');
 module.exports = {
   Update(req, res, next) {
-    const dao = new BoardDetailImageDetailModel(req);
-    dao.delete(res).catch(err => next(err));
+    const dao = new BoardDetailImageModel(req);
+    dao.update(res).catch(err => next(err));
   },
 };

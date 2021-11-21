@@ -11,7 +11,7 @@
 <tr><td>userId</td><td>Number</td><td>사용자 ID</td><td></td><td>✓</td></tr>
 </table>
 
-```json
+```js
 //request
 { "start": 2, "end": 3 }
 
@@ -56,7 +56,7 @@
 <tr><td>content</td><td>Array&lt;File&gt;</td><td>게시글 사진(최대 4개)</td><td>[]</td><td>✓</td></tr>
 </table>
 
-```json
+```js
 {"boardId": 2}
 ```
 
@@ -87,7 +87,7 @@
 <tr><td>:boardId</td><td>Number</td><td>게시글 번호</td><td></td><td></td></tr>
 </table>
 
-```json
+```js
 //request
 {}
 
@@ -111,13 +111,13 @@
 |body.content|String|게시글 본문|
 |body.hashtags|Array<String>|해시태그 목록(덮어쓰기)|
 
-```json
+```js
 {"complete": true}
 ```
 
 - DELETE /api/v1/board/:boardId
 
-```json
+```js
 {"complete": true}
 ```
 
@@ -131,7 +131,7 @@
 
 - DELETE /api/v1/board/:boardId/image/:imageId
 
-```json
+```js
 {"complete": true}
 ```
 
@@ -143,7 +143,7 @@
 <tr><td>:boardId</td><td>Number</td><td>게시글 번호</td><td></td><td></td></tr>
 </table>
 
-```json
+```js
 //request
 {}
 
@@ -160,7 +160,7 @@
 <tr><td>like</td><td>Boolean</td><td>true: like, false: dislike</td><td></td><td></td></tr>
 </table>
 
-```json
+```js
 //request
 { "like": true }
 
@@ -176,7 +176,84 @@
 <tr><td>:boardId</td><td>Number</td><td>게시글 번호</td><td></td><td></td></tr>
 </table>
 
-```json
+```js
+//request
+{}
+
+//response
+{ "complete": true }
+```
+
+- GET /api/v1/board/:boardID/comment
+
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>:boardID</td><td>Number</td><td>게시글 번호</td><td>❌</td><td>❌</td></tr>
+</table>
+
+```js
+//request
+{}
+
+//response
+{
+   "comments": [
+      {
+         "commentID": 2,
+         "name": "ky",
+         "content": "좋은 하루입니다.",
+         "createdAt": "2021-11-21T12:54:49.000Z"
+      }
+   ]
+}
+```
+
+- POST /api/v1/board/:boardID/comment
+
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>:boardID</td><td>Number</td><td>게시글 번호</td><td>❌</td><td>❌</td></tr>
+<tr><td>content</td><td>String</td><td>답글</td><td>❌</td><td>❌</td></tr>
+</table>
+
+```js
+//request
+{ "content": "좋은 하루입니다." }
+
+//response
+{ "complete": true }
+```
+
+- PUT /api/v1/board/:boardID/comment/:commentID
+
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>:boardID</td><td>Number</td><td>게시글 번호</td><td>❌</td><td>❌</td></tr>
+<tr><td>:commentID</td><td>Number</td><td>댓글 번호</td><td>❌</td><td>❌</td></tr>
+<tr><td>content</td><td>String</td><td>내용</td><td>❌</td><td>❌</td></tr>
+</table>
+
+```js
+//request
+{ "content": "좋은 생각입니다." }
+
+//response
+{ "complete": true }
+```
+
+- DELETE /api/v1/board/:boardID/comment/:commentID
+
+<table>
+<tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
+<tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
+<tr><td>:boardID</td><td>Number</td><td>게시글 번호</td><td>❌</td><td>❌</td></tr>
+<tr><td>:commentID</td><td>Number</td><td>댓글 번호</td><td>❌</td><td>❌</td></tr>
+</table>
+
+```js
 //request
 {}
 
