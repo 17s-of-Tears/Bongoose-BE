@@ -13,14 +13,15 @@ function createToken(payload) {
 }
 function createTokens(id, fresh) {
   const iat = Date.now() / 1000;
-  const exp = iat + 60 * 60 * 2;
-  const maxAge = iat + exp * 2 * 1000;
+  const lifeTime = 60 * 60 * 2
+  const exp = iat + lifeTime;
+  const maxAge = lifeTime * 1000;
   const accessToken = createToken({
     id, iat, exp, fresh
   });
   const refreshToken = createToken({
     id, iat,
-    exp: exp * 2,
+    exp,
     fresh
   });
   return {
@@ -45,7 +46,7 @@ class SignModel extends Model {
 
     this.email = req.body.email;
     this.password = req.body.password;
-    this.oldRefreshToken = req.cookie?.refreshToken;
+    this.oldRefreshToken = req.cookies?.refreshToken;
     this.newPassword = req.body.newPassword;
   }
 
@@ -87,23 +88,23 @@ class SignModel extends Model {
   async read(res) {
     try {
       const { id, fresh } = verifyToken(this.oldRefreshToken);
+      const {
+        accessToken,
+        refreshToken,
+        maxAge
+      } = createTokens(id, fresh);
+      res.cookie('refreshToken', refreshToken, {
+        maxAge,
+        secure: env.HTTPS,
+        httpOnly: true,
+        sameSite: 'none',
+      });
+      res.json({
+        accessToken
+      });
     } catch(err) {
       throw new SignModel.Error403();
     }
-    const {
-      accessToken,
-      refreshToken,
-      maxAge
-    } = createTokens(user.id);
-    res.cookie('refreshToken', refreshToken, {
-      maxAge,
-      secure: env.HTTPS,
-      httpOnly: true,
-      sameSite: 'none',
-    });
-    res.json({
-      accessToken
-    });
   }
 
   async update(res) {
