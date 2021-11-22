@@ -1,5 +1,14 @@
-const app = require('./loadModules').app;
-
+const path = require('path');
+const loader = require('./loadModules').app;
+const app = loader();
+const ROOT = process.cwd();
+const img = app('/img/*', {
+  Read(req, res) {
+    const dir = req.baseUrl;
+    const file = req.path;
+    res.sendFile(path.join(ROOT, dir, file));
+  },
+});
 const api = app('/api/v1');
 const user = api('/user');
 user('/', require('./endpoint/user'));
@@ -15,19 +24,31 @@ board('/rating', require('./endpoint/board/rating'));
 board('/:boardId', require('./endpoint/board/detail'));
 board('/:boardId/comment', require('./endpoint/board/detail/comment'));
 board('/:boardId/comment/:commentId', require('./endpoint/board/detail/comment/detail'));
-board('/:boardId/image', require('./endpoint/board/detail/image'));
-board('/:boardId/image/:imageId', require('./endpoint/board/detail/image/detail'));
+//board('/:boardId/image', require('./endpoint/board/detail/image'));
+//board('/:boardId/image/:imageId', require('./endpoint/board/detail/image/detail'));
 board('/:boardId/like', require('./endpoint/board/detail/like'));
-const friend = api('/friend');
 
-app.addErrorType(Error, {
-  status(err) {
-    if(/^\d{1,5} .{1,}/.test(err.message)) {
-      const code = /^(\d{1,5}) .{1,}/.exec(err.message);
-      return code[1];
-    } else {
-      return 500;
-    }
-  }
+const Model = require('./endpoint/model');
+app.addErrorType(Model.Error400Parameter{
+  status: 400,
+  message: 'INVALID_PARAMETER',
 });
-app.listen(48100);
+app.addErrorType(Model.Error400{
+  status: 400,
+});
+app.addErrorType(Model.Error401{
+  status: 401,
+  message: 'UNAUTHORIZED',
+});
+app.addErrorType(Model.Error403{
+  status: 403,
+  message: 'FORBIDDEN',
+});
+app.addErrorType(Model.Error404{
+  status: 404,
+  message: 'NOT_FOUND',
+});
+app.addErrorType(Error, {
+  status: 500,
+});
+app.listen(48000);

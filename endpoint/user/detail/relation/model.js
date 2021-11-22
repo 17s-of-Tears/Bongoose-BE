@@ -42,7 +42,7 @@ class UserRelationModel extends UserDetailModel {
       await this.checkAuthorized(db);
       await this.checkAvailable(db);
       if(this.userId === this.requestUserID) {
-        throw new Error('400 잘못된 사용자');
+        throw new UserRelationModel.Error400('INVALID_USER');
       }
       let result = {};
       const block = 0;
@@ -57,7 +57,7 @@ class UserRelationModel extends UserDetailModel {
         ]);
       }
       if(!result.affectedRows) {
-        throw new Error('400 잘못된 사용자');
+        throw new UserRelationModel.Error400('INVALID_USER');
       }
       res.json({
         complete: true

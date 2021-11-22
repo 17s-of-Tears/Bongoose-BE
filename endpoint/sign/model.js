@@ -58,7 +58,7 @@ class SignModel extends Model {
       ]);
       const user = users[0];
       if(!user) {
-        throw new Error('인증 실패');
+        throw new SignModel.Error403();
       }
       return user;
     });
@@ -80,7 +80,7 @@ class SignModel extends Model {
         accessToken
       });
     } else {
-      throw new Error('인증 실패.');
+      throw new SignModel.Error403();
     }
   }
 
@@ -88,7 +88,7 @@ class SignModel extends Model {
     try {
       const { id, fresh } = verifyToken(this.oldRefreshToken);
     } catch(err) {
-      throw new Error('403 유효하지 않은 인증.');
+      throw new SignModel.Error403();
     }
     const {
       accessToken,
@@ -109,7 +109,7 @@ class SignModel extends Model {
   async update(res) {
     this.checkParameters(this.password, this.newPassword);
     if(this.password === this.newPassword) {
-      throw new Error('400 이전 비밀번호와 동일합니다.');
+      throw new SignModel.Error400('CONFLICT_PASSWORD');
     }
     const user = await this.dao.serialize(async db => {
       await this.checkAuthorized(db);
@@ -118,7 +118,7 @@ class SignModel extends Model {
       ]);
       const user = users[0];
       if(!user) {
-        throw new Error('403 권한 없음');
+        throw new SignModel.Error403();
       }
 
       if(await bcrypt.compare(this.password, user.password)) {
@@ -132,7 +132,7 @@ class SignModel extends Model {
           fresh
         };
       } else {
-        throw new Error('400 비밀번호가 일치하지 않습니다.');
+        throw new SignModel.Error400('INVALID_PASSWORD');
       }
     });
 

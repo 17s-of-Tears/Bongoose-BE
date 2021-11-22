@@ -4,10 +4,10 @@ class BoardModel extends Model {
   constructor(req) {
     super(req);
 
-    this.start = req.query?.start ?? 0;
-    this.end = req.query?.end ?? 15;
+    this.start = (req.query?.start ?? 0) - 0;
+    this.end = (req.query?.end ?? 15) - 0;
     this.keyword = req.query?.keyword ?? '';
-    this.userId = req.query?.userId;
+    this.userId = req.query?.userId - 0;
 
     this.content = req.body?.content;
     this.hashtags = req.body?.hashtags ?? [];
@@ -27,6 +27,13 @@ class BoardModel extends Model {
     return Array.from(new Set(hashtags));
   }
 
+  async insertImages(db, boardId) {
+    if(this.file) {
+      this.file.id = boardId;
+      await this.file.createIntegrityAssurance(db);
+    }
+  }
+
   async create(res) {
     try {
       this.checkParameters(this.content);
@@ -37,7 +44,7 @@ class BoardModel extends Model {
         ]);
         const boardId = result.lastID;
         if(!boardId) {
-          throw new Error('???');
+          throw new Error('DB_ERROR');
         }
 
         const nonDuplicateHashtags = this.checkDuplicateHashtags(this.hashtags);
@@ -47,10 +54,7 @@ class BoardModel extends Model {
           ]);
         }
 
-        if(this.file) {
-          this.file.id = boardId;
-          await this.file.createIntegrityAssurance(db);
-        }
+        await this.insertImages(db, boardId);
 
         res.status(201);
         res.json({

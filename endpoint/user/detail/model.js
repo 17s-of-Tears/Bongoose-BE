@@ -13,7 +13,7 @@ class UserDetailModel extends UserModel {
       ]);
       const user = users[0];
       if(!user) {
-        throw new Error('404 내용 없음');
+        throw new UserDetailModel.Error404();
       }
 
       const images = await db.get('select boardImage.id as imageId, boardImage.imageUrl, board.id as boardId from board left join boardImage on board.id=boardImage.boardId where board.userId=? and boardImage.boardId is not null order by board.createdAt desc limit 8', [

@@ -20,7 +20,7 @@ class SignUpModel extends SignModel {
         this.email
       ]);
       if(users.length) {
-        throw new Error('이미 존재하는 이메일입니다.');
+        throw new SignUpModel.Error400('CONFLICT_EMAIL');
       }
       const passwordHash = await bcrypt.hash(this.password, 10);
 

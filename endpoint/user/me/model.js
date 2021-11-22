@@ -19,7 +19,7 @@ class UserDetailModel extends UserModel {
         this.requestUserID
       ]);
       if(!users.length) {
-        throw new Error('???');
+        throw new UserDetailModel.Error403();
       }
       const user = users[0];
 

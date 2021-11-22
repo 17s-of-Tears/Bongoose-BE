@@ -11,7 +11,7 @@ class BoardDetailReplyDetailModel extends BoardDetailReplyModel {
     ]);
     const reply = replies[0];
     if(!reply || !reply.isOwned) {
-      throw new Error('403 권한 없음');
+      throw new BoardDetailReplyDetailModel.Error403();
     }
   }
 
@@ -24,7 +24,7 @@ class BoardDetailReplyDetailModel extends BoardDetailReplyModel {
         this.commentId
       ]);
       if(!result.affectedRows) {
-        throw new Error('403 권한 없음');
+        throw new BoardDetailReplyDetailModel.Error403();
       }
       res.json({
         complete: true
@@ -41,7 +41,7 @@ class BoardDetailReplyDetailModel extends BoardDetailReplyModel {
         this.content, this.commentId
       ]);
       if(!result.affectedRows) {
-        throw new Error('403 권한 없음');
+        throw new BoardDetailReplyDetailModel.Error403();
       }
       res.json({
         complete: true

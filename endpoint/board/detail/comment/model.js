@@ -13,7 +13,7 @@ class BoardDetailReplyModel extends BoardDetailModel {
         this.boardId, this.requestUserID, this.content
       ]);
       if(!result.affectedRows) {
-        throw new Error('500 작성 실패');
+        throw new Error('DB_ERROR');
       }
       res.status(201);
       res.json({
