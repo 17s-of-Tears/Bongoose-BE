@@ -13,6 +13,7 @@ const api = app('/api/v1');
 const user = api('/user');
 user('/', require('./endpoint/user'));
 user('/me', require('./endpoint/user/me'));
+user('/random', require('./endpoint/user/random'));
 user('/:userId', require('./endpoint/user/detail'));
 user('/:userId/relation', require('./endpoint/user/detail/relation'));
 const sign = api('/sign');
@@ -29,22 +30,22 @@ board('/:boardId/comment/:commentId', require('./endpoint/board/detail/comment/d
 board('/:boardId/like', require('./endpoint/board/detail/like'));
 
 const Model = require('./endpoint/model');
-app.addErrorType(Model.Error400Parameter{
+app.addErrorType(Model.Error400Parameter, {
   status: 400,
   message: 'INVALID_PARAMETER',
 });
-app.addErrorType(Model.Error400{
+app.addErrorType(Model.Error400, {
   status: 400,
 });
-app.addErrorType(Model.Error401{
+app.addErrorType(Model.Error401, {
   status: 401,
   message: 'UNAUTHORIZED',
 });
-app.addErrorType(Model.Error403{
+app.addErrorType(Model.Error403, {
   status: 403,
   message: 'FORBIDDEN',
 });
-app.addErrorType(Model.Error404{
+app.addErrorType(Model.Error404, {
   status: 404,
   message: 'NOT_FOUND',
 });

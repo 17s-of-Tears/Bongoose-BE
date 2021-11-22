@@ -210,6 +210,8 @@
 <tr><th colspan="2" rowspan="1">허용 타입</th><td colspan="3">application/json</td></tr>
 <tr><th>parameter</th><th>type</th><th>description</th><th>default</th><th>optional</th>
 <tr><td>:boardID</td><td>Number</td><td>게시글 번호</td><td>❌</td><td>❌</td></tr>
+<tr><td>page</td><td>Number</td><td>페이지 번호</td><td>0</td><td>✅</td></tr>
+<tr><td>pageSize</td><td>Number</td><td>페이지 당 표시 개수</td><td>10</td><td>✅</td></tr>
 </table>
 
 ```js
@@ -218,12 +220,23 @@
 
 //response
 {
+   "_meta": { "page": { "current": 1, "last": 1 } },
    "comments": [
       {
-         "commentID": 2,
-         "name": "ky",
-         "content": "좋은 하루입니다.",
-         "createdAt": "2021-11-21T12:54:49.000Z"
+         "commentID": 3,
+         "name": "찬규",
+         "email": "changyu5533@naver.com",
+         "imageUrl": null,
+         "content": "댓글을 달아봐요!",
+         "createdAt": "2021-11-22T06:41:38.000Z"
+      },
+      {
+         "commentID": 4,
+         "name": "찬규",
+         "email": "changyu5533@naver.com",
+         "imageUrl": null,
+         "content": "댓글 두번째 테스트!",
+         "createdAt": "2021-11-22T07:00:14.000Z"
       }
    ]
 }

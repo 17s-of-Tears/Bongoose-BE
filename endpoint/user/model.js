@@ -15,8 +15,8 @@ class UserModel extends Model {
       'select count(*) as lastEnd from userRelation left join user on userRelation.publishUserId=user.id where userRelation.subscribeUserId=? and user.name like ?' :
       'select count(*) as lastEnd from user where user.name like ?';
     const fetchUser = (this.mysubscribe) ?
-      'select distinct user.id, user.email, user.name from userRelation left join user on userRelation.publishUserId=user.id where userRelation.subscribeUserId=? and user.name like ? limit ?,?' :
-      'select distinct user.id, user.email, user.name from user where user.name like ? limit ?,?';
+      'select distinct user.id, user.email, user.name, user.imageUrl, user.description from userRelation left join user on userRelation.publishUserId=user.id where userRelation.subscribeUserId=? and user.name like ? limit ?,?' :
+      'select distinct user.id, user.email, user.name, user.imageUrl, user.description from user where user.name like ? limit ?,?';
     const user = await this.dao.serialize(async db => {
       if(this.mysubscribe) {
         await this.checkAuthorized(db);
