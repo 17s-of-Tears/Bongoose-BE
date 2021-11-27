@@ -4,7 +4,7 @@ class BoardDetailModel extends BoardModel {
     super(req);
 
     this.boardId = req.params?.boardId;
-
+    this.overwrite = req.body?.overwrite ?? [];
   }
 
   async checkBoardOwned(db) {
@@ -15,35 +15,6 @@ class BoardDetailModel extends BoardModel {
     if(!board || !board.isOwned) {
       throw new BoardDetailModel.Error403();
     }
-  }
-
-  async removeImages(db, boardId) {
-    const files = await db.get('select boardImage.id from boardImage where boardImage.boardId=?', [
-      this.boardId
-    ]);
-    this.file.id = this.boardId;
-    for(const file of files) {
-      await this.file.deleteIntegrityAssurance(db, file.id);
-    }
-  }
-
-  async delete(res) {
-    this.checkParameters(this.boardId);
-    await this.dao.serialize(async db => {
-      await this.checkAuthorized(db);
-      await this.checkBoardOwned(db);
-      await this.removeImages(db);
-
-      const result = await db.run('delete from board where board.id=? and board.userId=?', [
-        this.boardId, this.requestUserID
-      ]);
-      if(!result.affectedRows) {
-        throw new BoardDetailModel.Error403();
-      }
-      res.json({
-        complete: true
-      });
-    });
   }
 
   async read(res) {
@@ -82,49 +53,98 @@ class BoardDetailModel extends BoardModel {
     });
   }
 
+  async updateImages(db, boardId) {
+    const images = await db.get('select boardImage.id, boardImage.imageUrl from boardImage where boardImage.boardId=?', [
+      boardId
+    ]);
+    // 남겨둘 사진 번호에 없는 사진 목록 추리기
+    const targets = images.filter(image => !this.overwrite.includes(image.id));
+
+    // 업로드 전에 개수검사
+    if((images.length - targets.length + this.file.size()) > 4) {
+      throw new BoardDetailModel.Error400('LIMIT_EXCEEDED');
+    }
+    await this.file.del(async remover => {
+      for(const target of targets) {
+        await db.run('delete from boardImage where boardImage.id=?', [
+          target.id
+        ]);
+        remover(target.imageUrl);
+      }
+    });
+    await this.file.add(async file => {
+      await db.run('insert into boardImage (boardId, imageUrl) values (?, ?)', [
+        boardId, `img/board/${file.uuid}`
+      ]);
+    }, { force: true });
+  }
+
   async update(res) {
-    try {
-      this.checkParameters(this.boardId, this.content);
-      await this.dao.serialize(async db => {
-        await this.checkAuthorized(db);
-        await this.checkBoardOwned(db);
+    this.checkParameters(this.boardId, this.content);
+    await this.dao.serialize(async db => {
+      await this.checkAuthorized(db);
+      await this.checkBoardOwned(db);
 
-        const result = await db.run('update board set board.content=? where board.id=? and board.userId=?', [
-          this.content, this.boardId, this.requestUserID
+      const result = await db.run('update board set board.content=? where board.id=? and board.userId=?', [
+        this.content, this.boardId, this.requestUserID
+      ]);
+      if(!result.affectedRows) {
+        throw new BoardDetailModel.Error403();
+      }
+
+      // hashtag 덮어쓰기
+      await db.run('delete from boardHashtag where boardHashtag.boardId=?', [
+        this.boardId
+      ]);
+
+      // 프론트엔드 요청사항에 의해 덮어쓰기로 변경
+      const nonDuplicateHashtags = this.checkDuplicateHashtags(this.hashtags);
+      for(const hashtag of nonDuplicateHashtags) {
+        await db.run('insert into boardHashtag(boardId, hashtag) values (?, ?)', [
+          this.boardId, hashtag
         ]);
-        if(!result.affectedRows) {
-          throw new BoardDetailModel.Error403();
-        }
-
-        // hashtag 덮어쓰기
-        await db.run('delete from boardHashtag where boardHashtag.boardId=?', [
-          this.boardId
-        ]);
-
-        // 프론트엔드 요청사항에 의해 덮어쓰기로 변경
-        const nonDuplicateHashtags = this.checkDuplicateHashtags(this.hashtags);
-        for(const hashtag of nonDuplicateHashtags) {
-          await db.run('insert into boardHashtag(boardId, hashtag) values (?, ?)', [
-            this.boardId, hashtag
-          ]);
-        }
-
-        res.json({
-          complete: true
-        });
-
-        await this.deleteImages(db);
-        await this.insertImages(db, this.boardId);
-
-        res.status(201);
-        res.json({
-          boardId
-        });
+      }
+      await this.updateImages(db, this.boardId);
+      res.json({
+        complete: true,
       });
-    } catch(err) {
+    }).catch(err => {
       this.file && this.file.withdraw();
       throw err;
-    }
+    });
+  }
+
+  async removeImages(db, boardId) {
+    const files = await db.get('select boardImage.imageUrl from boardImage where boardImage.boardId=?', [
+      boardId
+    ]);
+    await this.file.del(async remover => {
+      for(const file of files) {
+        remover(file.imageUrl);
+      }
+    });
+    await db.run('delete from boardImage where boardImage.boardId=?', [
+      boardId
+    ]);
+  }
+
+  async delete(res) {
+    this.checkParameters(this.boardId);
+    await this.dao.serialize(async db => {
+      await this.checkAuthorized(db);
+      await this.checkBoardOwned(db);
+      await this.removeImages(db, this.boardId);
+
+      const result = await db.run('delete from board where board.id=? and board.userId=?', [
+        this.boardId, this.requestUserID
+      ]);
+      if(!result.affectedRows) {
+        throw new BoardDetailModel.Error403();
+      }
+      res.json({
+        complete: true
+      });
+    });
   }
 }
 module.exports = BoardDetailModel;

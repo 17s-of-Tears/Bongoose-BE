@@ -2,6 +2,11 @@ const SignModel = require('../model');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const uuidv4 = require('uuid').v4;
+/*
+   정규식 출처
+   https://stackoverflow.com/questions/46155/whats-the-best-way-to-validate-an-email-address-in-javascript
+*/
+const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 function createDefaultName() {
   const defaultHash = crypto.randomBytes(3).toString('hex');
   return `봉구${defaultHash}`;
@@ -15,6 +20,10 @@ class SignUpModel extends SignModel {
   }
 
   async create(res) {
+    this.checkParameters(this.email, this.password);
+    if(!regex.test(this.email)) {
+      throw new SignUpModel.Error400('INVALID_EMAIL');
+    }
     await this.dao.serialize(async db => {
       const users = await db.get('select user.name from user where user.email=?', [
         this.email

@@ -1,5 +1,5 @@
 const Model = require('../model');
-const FileSystem = require('./file').BoardFileSystem;
+//const FileSystem = require('./file').BoardFileSystem;
 class BoardModel extends Model {
   constructor(req) {
     super(req);
@@ -16,11 +16,7 @@ class BoardModel extends Model {
     }
     this.images = req.body?.images ?? [];
 
-    if(req.files) {
-      this.file = new FileSystem(null, req.files);
-    } else if(req.method === 'DELETE') {
-      this.file = new FileSystem(null, null);
-    }
+    this.useFilesystem(req.files, '/img/board');
   }
 
   checkDuplicateHashtags(hashtags) {
@@ -28,43 +24,41 @@ class BoardModel extends Model {
   }
 
   async insertImages(db, boardId) {
-    if(this.file) {
-      this.file.id = boardId;
-      await this.file.createIntegrityAssurance(db);
-    }
+    await this.file.add(async file => {
+      await db.run('insert into boardImage(boardId, imageUrl) values (?, ?)', [
+        boardId, `img/board/${file.uuid}`
+      ]);
+    }, { force: true });
   }
 
   async create(res) {
-    try {
-      this.checkParameters(this.content);
-      await this.dao.serialize(async db => {
-        await this.checkAuthorized(db);
-        const result = await db.run('insert into board(userId, content) values (?, ?)', [
-          this.requestUserID, this.content
+    this.checkParameters(this.content);
+    await this.dao.serialize(async db => {
+      await this.checkAuthorized(db);
+      const result = await db.run('insert into board(userId, content) values (?, ?)', [
+        this.requestUserID, this.content
+      ]);
+      const boardId = result.lastID;
+      if(!boardId) {
+        throw new Error('DB_ERROR');
+      }
+
+      const nonDuplicateHashtags = this.checkDuplicateHashtags(this.hashtags);
+      for(const hashtag of nonDuplicateHashtags) {
+        await db.run('insert into boardHashtag(boardId, hashtag) values (?, ?)', [
+          boardId, hashtag
         ]);
-        const boardId = result.lastID;
-        if(!boardId) {
-          throw new Error('DB_ERROR');
-        }
+      }
 
-        const nonDuplicateHashtags = this.checkDuplicateHashtags(this.hashtags);
-        for(const hashtag of nonDuplicateHashtags) {
-          await db.run('insert into boardHashtag(boardId, hashtag) values (?, ?)', [
-            boardId, hashtag
-          ]);
-        }
+      await this.insertImages(db, boardId);
 
-        await this.insertImages(db, boardId);
-
-        res.status(201);
-        res.json({
-          boardId
-        });
+      res.status(201).json({
+        boardId
       });
-    } catch(err) {
+    }).catch(err => {
       this.file && this.file.withdraw();
       throw err;
-    }
+    });
 
     this.dao.serialize(async db => {
       await db.run(

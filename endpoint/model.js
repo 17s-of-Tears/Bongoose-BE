@@ -1,4 +1,5 @@
 const DAO = require('../loadModules').DAO;
+const FileSystem = require('../loadModules').FileSystem;
 class Error400 extends Error {}
 class Error400Parameter extends Error {}
 class Error401 extends Error {}
@@ -15,6 +16,11 @@ class Model {
     this.dao = new DAO();
     this.requestUserID = req.user?.id;
     this.fresh = req.user?.fresh;
+    this.file = null;
+  }
+
+  useFilesystem(file, dir) {
+    this.file = new FileSystem(file, dir);
   }
 
   async checkAuthorized(db) {

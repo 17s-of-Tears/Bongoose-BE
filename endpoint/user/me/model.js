@@ -6,9 +6,7 @@ class UserDetailModel extends UserModel {
     this.nickname = req.body.nickname;
     this.description = req.body.description;
     if(req.file) {
-      this.file = new FileSystem(this.requestUserID, req.file);
-    } else if(req.body.image === null) {
-      this.file = new FileSystem(this.requestUserID, null);
+      this.useFilesystem(req.file, '/img/profile');
     }
   }
 
@@ -33,6 +31,23 @@ class UserDetailModel extends UserModel {
     });
   }
 
+  async updateImage(db) {
+    // 무결성을 위한 기존 파일 경로 획득
+    const users = await db.get('select user.imageUrl from user where user.id=?', [
+      this.requestUserID
+    ]);
+    const fileURI = users[0].imageUrl;
+    await this.file.add(async file => {
+      await db.run('update user set user.imageUrl=? where user.id=?', [
+        `img/board/${file.uuid}`, this.requestUserID
+      ]);
+    });
+    // db가 모두 올바르게 작동하여야 파일 삭제
+    fileURI && await this.file.del(remover => {
+      remover(fileURI);
+    });
+  }
+
   async update(res) {
     await this.dao.serialize(async db => {
       await this.checkAuthorized(db);
@@ -50,7 +65,7 @@ class UserDetailModel extends UserModel {
       }
 
       if(this.file) {
-        await this.file.updateIntegrityAssurance(db);
+        await this.updateImage(db);
       }
 
       res.json({
