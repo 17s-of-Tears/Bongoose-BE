@@ -1,9 +1,10 @@
 const multer = require('multer');
 const uuidv4 = require('uuid').v4;
-
+const path = require('path');
+const ROOT = process.cwd();
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, '/tmp/boongoose');
+    cb(null, path.join(ROOT, '/img/tmp'));
   },
   filename(req, file, cb) {
     const extname = checkMimetype(file);
@@ -36,8 +37,6 @@ const middleware = multer({
     fileSize: '10MB'
   }
 }).single('image');
-
-const path = require('path');
 
 const FileSystem = require('../../file');
 class UserFileSystem extends FileSystem {

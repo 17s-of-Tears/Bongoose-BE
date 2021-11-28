@@ -5,6 +5,10 @@ class BoardDetailModel extends BoardModel {
 
     this.boardId = req.params?.boardId;
     this.overwrite = req.body?.overwrite ?? [];
+    if(!(this.overwrite instanceof Array)) {
+      this.overwrite = [ this.overwrite ];
+    }
+    this.overwrite = this.overwrite.map(row => row - 0);
   }
 
   async checkBoardOwned(db) {
