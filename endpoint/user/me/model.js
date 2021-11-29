@@ -39,7 +39,7 @@ class UserDetailModel extends UserModel {
     const fileURI = users[0].imageUrl;
     await this.file.add(async file => {
       await db.run('update user set user.imageUrl=? where user.id=?', [
-        `img/board/${file.uuid}`, this.requestUserID
+        `img/profile/${file.uuid}`, this.requestUserID
       ]);
     });
     // db가 모두 올바르게 작동하여야 파일 삭제
