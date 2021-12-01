@@ -52,4 +52,14 @@ app.addErrorType(Model.Error404, {
 app.addErrorType(Error, {
   status: 500,
 });
-app.listen(48000);
+//app.listen(48000);
+
+const proto = app.getProto();
+const https = require('https');
+const fs = require('fs');
+const credentials = {
+  key: fs.readFileSync(process.env.SSL_KEY, 'utf8'),
+  cert: fs.readFileSync(process.env.SSL_CERT, 'utf8'),
+};
+const server = https.createServer(credentials, proto);
+server.listen(48000);

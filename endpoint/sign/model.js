@@ -73,7 +73,7 @@ class SignModel extends Model {
       } = createTokens(user.id, user.fresh);
       res.cookie('refreshToken', refreshToken, {
         maxAge,
-        secure: env.HTTPS,
+        secure: true,
         httpOnly: true,
         sameSite: 'none',
       });
@@ -95,7 +95,7 @@ class SignModel extends Model {
       } = createTokens(id, fresh);
       res.cookie('refreshToken', refreshToken, {
         maxAge,
-        secure: env.HTTPS,
+        secure: true,
         httpOnly: true,
         sameSite: 'none',
       });
@@ -144,7 +144,7 @@ class SignModel extends Model {
     } = createTokens(user.id, user.fresh);
     res.cookie('refreshToken', refreshToken, {
       maxAge,
-      secure: env.HTTPS,
+      secure: true,
       httpOnly: true
     });
     res.json({
