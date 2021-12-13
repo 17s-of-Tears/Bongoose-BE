@@ -21,41 +21,53 @@
 {
    "boards": [
       {
-         "id": 172,
-         "userName": "테스트",
-         "userEmail": "test@test.com",
+         "id": 206,
+         "userId": 21,
+         "userName": "찬규",
+         "userEmail": "1@1.com",
+         "userImageUrl": null,
          "images": null,
-         "hashtags": [ "test" ],
-         "likes": 0,
+         "hashtags": null,
+         "likes": 2,
          "dislikes": 0,
-         "content": "test ",
-         "createdAt": "2021-11-27T11:47:22.000Z"
+         "content": "test",
+         "createdAt": "2021-12-11T14:23:32.000Z"
       },
       {
-         "id": 171,
-         "userName": "테스트",
-         "userEmail": "test@test.com",
-         "images": null,
-         "hashtags": [ "test" ],
+         "id": 205,
+         "userId": 24,
+         "userName": "찬규",
+         "userEmail": "changyu5533@naver.com",
+         "userImageUrl": "img/profile/e9e3b4cf25734429890bb02ac9b1cf0b.png",
+         "images": [
+            { "176": "img/board/6451636620f1492e8761f4ef149539d2.png" },
+            { "177": "img/board/5447081e329644cf86ffdf347003fe6f.png" }
+         ],
+         "hashtags": [ "게시글", "첫번째" ],
          "likes": 0,
          "dislikes": 0,
-         "content": "test ",
-         "createdAt": "2021-11-27T11:47:19.000Z"
+         "content": "안녕하세요  ",
+         "createdAt": "2021-11-29T14:08:12.000Z"
       },
       {
-         "id": 170,
-         "userName": "테스트",
+         "id": 190,
+         "userId": 30,
+         "userName": "닉네임변경",
          "userEmail": "test@test.com",
-         "images": null,
-         "hashtags": [ "test" ],
-         "likes": 0,
-         "dislikes": 0,
-         "content": "test ",
-         "createdAt": "2021-11-27T11:47:17.000Z"
+         "userImageUrl": "img/profile/c427fcb2118c48d482ccd660c37d1c1e.png",
+         "images": [
+            { "162": "img/board/123b77c3bd534a2fbb7c6e3a9aff7175.png" },
+            { "163": "img/board/a31b68fc40ff47e49d1b5967ac8b7d5d.png" }
+         ],
+         "hashtags": [ "test", "test2" ],
+         "likes": 4,
+         "dislikes": 4,
+         "content": "수정test   ",
+         "createdAt": "2021-11-29T01:54:09.000Z"
       }
    ],
    "requestEnd": 3,
-   "lastEnd": 21
+   "lastEnd": 18
 }
 ```
 
@@ -119,6 +131,8 @@
 { "url": "/api/v1/board/175", "data": {} }
 // response
 {
+   "userId": 4,
+   "userImageUrl": "img/profile/7f2d121d0c864ff289682b3a119386ae.png",
    "name": "ky",
    "createdAt": "2021-11-27T18:45:49.000Z",
    "content": "사진 덮어쓰기",

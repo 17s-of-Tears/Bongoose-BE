@@ -23,7 +23,7 @@ class BoardDetailModel extends BoardModel {
 
   async read(res) {
     await this.dao.serialize(async db => {
-      const boards = await db.get('select user.name, board.createdAt, board.content from board left join user on board.userId=user.id where board.id=?', [
+      const boards = await db.get('select user.id as userId, user.imageUrl as userImageUrl, user.name, board.createdAt, board.content from board left join user on board.userId=user.id where board.id=?', [
         this.boardId
       ]);
       const board = boards[0];

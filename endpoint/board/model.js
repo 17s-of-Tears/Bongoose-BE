@@ -11,6 +11,9 @@ class BoardModel extends Model {
 
     this.content = req.body?.content;
     this.hashtags = req.body?.hashtags ?? [];
+    if(typeof this.hashtags === 'string') {
+      this.hashtags = [ this.hashtags ];
+    }
     if(!this.hashtags instanceof Array) {
       this.hashtags = [ this.hashtags ];
     }
@@ -84,8 +87,10 @@ where
     const boards = await db.get(
       `select
   distinct board.id,
+  user.id as userId,
   user.name as userName,
   user.email as userEmail,
+  user.imageUrl as userImageUrl,
   concat('[', group_concat(distinct '{"', boardImage.id, '":"', boardImage.imageUrl, '"}'), ']') as images,
   concat('[', group_concat(distinct '"', boardHashtag.hashtag, '"'), ']') as hashtags,
   sum(case when boardLike.likeOrDislike=1 then 1 else 0 end) as likes,
@@ -114,8 +119,10 @@ where user.id=? group by board.id order by board.id desc limit ?,?`, [
     const boards = await db.get(
       `select
   distinct board.id,
+  user.id as userId,
   user.name as userName,
   user.email as userEmail,
+  user.imageUrl as userImageUrl,
   concat('[', group_concat(distinct '{"', boardImage.id, '":"', boardImage.imageUrl, '"}'), ']') as images,
   concat('[', group_concat(distinct '"', boardHashtag.hashtag, '"'), ']') as hashtags,
   sum(case when boardLike.likeOrDislike=1 then 1 else 0 end) as likes,

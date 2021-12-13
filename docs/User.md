@@ -10,6 +10,7 @@
 <tr><td>start</td><td>Number</td><td>검색 시작점</td><td>0</td><td>✅</td></tr>
 <tr><td>end</td><td>Number</td><td>검색 개수</td><td>0</td><td>✅</td></tr>
 <tr><td>keyword</td><td>String</td><td>사용자 닉네임</td><td></td><td>✅</td></tr>
+<tr><td>mysubscribe</td><td>Number</td><td>내가 구독한 사용자만 검색(0 또는 1)</td><td>0</td><td>✅</td></tr>
 </table>
 
 
