@@ -84,6 +84,7 @@
 <tr><td>nickname</td><td>String</td><td>변경할 닉네임</td><td></td><td>✅</td></tr>
 <tr><td>description</td><td>String</td><td>변경할 자기소개</td><td></td><td>✅</td></tr>
 <tr><td>image</td><td>File</td><td>변경할 프로필 사진</td><td></td><td>✅</td></tr>
+<tr><td>defaultImage</td><td>Boolean</td><td>기본 이미지로 변경</td><td>false</td><td>✅</td></tr>
 </table>
 
 

@@ -62,7 +62,7 @@ if(process.env.HTTPS==='1') {
     cert: fs.readFileSync(process.env.SSL_CERT, 'utf8'),
   };
   const server = https.createServer(credentials, proto);
-  server.listen(48000);
+  server.listen(process.env.PORT ? process.env.PORT - 0 : 48000);
 } else {
-  app.listen(48000);
+  app.listen(process.env.PORT ? process.env.PORT - 0 : 48000);
 }
