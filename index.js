@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const loader = require('./loadModules').app;
 const app = loader();
 const ROOT = process.cwd();
@@ -28,6 +29,20 @@ board('/:boardId/comment/:commentId', require('./endpoint/board/detail/comment/d
 //board('/:boardId/image', require('./endpoint/board/detail/image'));
 //board('/:boardId/image/:imageId', require('./endpoint/board/detail/image/detail'));
 board('/:boardId/like', require('./endpoint/board/detail/like'));
+const index = path.join(__dirname, 'front', 'index.html');
+app('/*', {
+  Read(req, res) {
+    const file = req.path;
+    const { dir, base } = path.parse(file);
+    const target = path.join(__dirname, 'front', dir, base);
+    if(fs.existsSync(target)) {
+      res.sendFile(target);
+    } else {
+      res.sendFile(index);
+    }
+  }
+});
+
 
 const Model = require('./endpoint/model');
 app.addErrorType(Model.Error400Parameter, {
