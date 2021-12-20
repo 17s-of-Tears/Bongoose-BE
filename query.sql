@@ -67,3 +67,26 @@ create table if not exists friend(
   foreign key (friendUserId) references user(id) on delete cascade on update cascade,
   primary key (userId, friendUserId)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+create table if not exists userRelation(
+  subscribeUserId int unsigned not null,
+  publishUserId int unsigned not null,
+  createdAt timestamp not null default current_timestamp on update current_timestamp,
+  isBlock tinyint not null default 0,
+  foreign key (publishUserId) references user(id) on delete cascade on update cascade,
+  foreign key (subscribeUserId) references user(id) on delete cascade on update cascade,
+  UNIQUE (publishUserId, subscribeUserId)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+create table if not exists notification(
+  id int unsigned not null AUTO_INCREMENT,
+  subscribeUserId int unsigned not null,
+  publishUserId int unsigned not null,
+  message TEXT not null,
+  isAlert tinyint not null default 0,
+  createdAt timestamp not null default current_timestamp,
+  modifiedAt timestamp not null default current_timestamp on update current_timestamp,
+  foreign key (publishUserId) references user(id) on delete cascade on update cascade,
+  foreign key (subscribeUserId) references user(id) on delete cascade on update cascade,
+  primary key (id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
