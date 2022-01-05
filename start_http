@@ -1,2 +1,7 @@
 #!/bin/bash
-PORT=48100 JWT=true PROXY=true MARIADB_NAME=boongoose CORS_WHITELIST='.corsWhitelist' SSL_KEY='/etc/letsencrypt/live/codingjoa.kro.kr/privkey.pem' SSL_CERT='/etc/letsencrypt/live/codingjoa.kro.kr/cert.pem' JEKO_HOME=$HOME'/jeko' node .
+PORT=48100 \
+JEKO_HOME=$HOME'/jeko' \
+JWT=true \
+CORS_WHITELIST='.corsWhitelist' \
+MARIADB_NAME=boongoose \
+node .
